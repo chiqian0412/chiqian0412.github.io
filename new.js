@@ -54,11 +54,11 @@ const shuffle = () =>{
 
 var timer= document.querySelector('.time');   
 var scoresall = document.querySelector('.scoresall') ;
-var maxtime = 200; 
+var maxtime = 40; 
 var timestart;
 const startGame = () =>{
     gameBoard.innerHTML = "";
-    timer.innerHTML = "Limit time:60s";
+    timer.innerHTML = "Limit time:40s";
     scoresall.innerHTML = 'Scores:0';
 }
 const countDown = () =>{
@@ -73,7 +73,7 @@ const countDown = () =>{
         playerScores.push(totle);
         scoresall.innerHTML = 'Scores:'+ totle;
         totle = 0;
-        maxtime = 200;
+        maxtime = 40;
         comparePlayers();
         
     }
@@ -129,7 +129,7 @@ const generateCards = () => {
                         playerScores.push(totle);
                         scoresall.innerHTML = 'Scores:'+ totle;
                         totle = 0;
-                        maxtime = 200;
+                        maxtime = 40;
                         
                         // compare two players scores.
                         comparePlayers();
