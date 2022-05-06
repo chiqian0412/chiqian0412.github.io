@@ -1,14 +1,18 @@
 const gameBoard = document.querySelector('.gameBoard');
 const score = document.querySelectorAll('.scores');//array
-// var playerOneScore = 0;
-// var playerTwoScore = 0;
+const timer= document.querySelector('.time');   
+const scoresall = document.querySelector('.scoresall') ;
+const musicCheck = document.querySelector('.musicCheck');
+const music =document.querySelector('.music iframe');
 var clickSound = new Audio('./sounds/clickSound.mp3');
 var wrongSound = new Audio('./sounds/wrong.m4a');
 var rightSound = new Audio('./sounds/good job.m4a')
 var totle = 0;
 var playerScores = [];
 var curCards = [];
-// the start website.
+var maxtime = 40; 
+var timestart;
+//============================== Set the start website ==================================
 gameBoard.innerHTML = 
 `<div class="rules">
 <h3> Memory Game Rules:</h3>
@@ -18,7 +22,7 @@ gameBoard.innerHTML =
 <p>This is a timer game, please pay attention.</p>
 </div>`
 
-// Classes the cards and back card.
+//=========================== Classes the cards and back card ==========================
 class Card{
     constructor(name,src){
         this.name = name
@@ -45,22 +49,34 @@ const cards = [card1,card2,card3,card4,card5,card6,card7,card8,card9,card10,card
 const backCard = new Card('backCard','./Image/questionMark.jpeg')
 
 
-// create a shuffle card function.
+//=================================== Create functions ==================================
+
+// shuffle the cards.
 const shuffle = () =>{
     cards.sort(() => Math.random() - 0.5);
     console.log(cards)
     return cards;
 }
 
-var timer= document.querySelector('.time');   
-var scoresall = document.querySelector('.scoresall') ;
-var maxtime = 40; 
-var timestart;
+// when restart the game, reset the gameboard, timer and scores.
 const startGame = () =>{
     gameBoard.innerHTML = "";
     timer.innerHTML = "Limit time:40s";
     scoresall.innerHTML = 'Scores:0';
 }
+
+// set the music control function.
+const musicOnOff = () =>{
+    if(musicCheck.innerHTML === "On"){
+        musicCheck.innerHTML = "Off";
+        music.src=""
+    }else{
+        musicCheck.innerHTML = "On";
+        music.src = "./sounds/backgroundMusic.mp3";
+    }
+}
+
+// set the count down timer.
 const countDown = () =>{
     maxtime -= 1;
     if (maxtime >= 0) {
@@ -79,6 +95,7 @@ const countDown = () =>{
     }
 }
 
+// if two cards are not matched, play a wrong sound, and recover these two cards.
 const notMatch = () =>{
     wrongSound.play();
     curCards.forEach((a)=>{
@@ -87,7 +104,45 @@ const notMatch = () =>{
     curCards.splice(0,2);
 }
 
-// create a generate function.
+// compare two players' scores.
+const comparePlayers = () =>{
+    if(playerScores.length===1){
+        score[0].innerHTML = 'Player One:'+playerScores[0];
+        gameBoard.innerHTML = 
+            `<div class="rules-2">
+            <h1>Click Start to Switch Player</h1>`
+    }else if(playerScores.length === 2){
+        score[1].innerHTML =  'Player two:'+playerScores[1];
+        if(playerScores[0]>playerScores[1]){
+            score[0].innerHTML = `
+            <p>Player One: ${playerScores[0]}</p>
+            <h3>I Win!!!</h3>`
+            gameBoard.innerHTML = 
+            `<div class="rules-2">
+            <h3>Player One Win!</h3>
+            <h3>Click New Game to Start a New Turn</h3>`
+            document.querySelector('#player1').src = './Image/player1.gif';
+
+        }else if(playerScores[1]>playerScores[0]){
+            score[1].innerHTML = `
+            <p>Player One: ${playerScores[1]}</p>
+            <h3>I Win!!!</h3>`
+            gameBoard.innerHTML = 
+            `<div class="rules-2">
+            <h3>Player Two Win!</h3>
+            <h3>Click New Game to Start a New Turn</h3>`
+            document.querySelector('#player2').src = './Image/player2.gif';
+        }else{
+            gameBoard.innerHTML = 
+            `<div class="rules-2">
+            <h3>No One Win!</h3>
+            <h3>Click New Game to Start a New Turn</h3>`
+        }
+        playerScores.splice(0,2);
+    }
+}
+
+//========================= generate function =========================================
 const generateCards = () => {
     shuffle()
     startGame()
@@ -140,54 +195,4 @@ const generateCards = () => {
                 }
         }
     }   
-}
-
-const comparePlayers = () =>{
-    if(playerScores.length===1){
-        score[0].innerHTML = 'Player One:'+playerScores[0];
-        gameBoard.innerHTML = 
-            `<div class="rules-2">
-            <h1>Click Start to Switch Player</h1>`
-    }else if(playerScores.length === 2){
-        score[1].innerHTML =  'Player two:'+playerScores[1];
-        if(playerScores[0]>playerScores[1]){
-            score[0].innerHTML = `
-            <p>Player One: ${playerScores[0]}</p>
-            <h3>I Win!!!</h3>`
-            gameBoard.innerHTML = 
-            `<div class="rules-2">
-            <h3>Player One Win!</h3>
-            <h3>Click New Game to Start a New Turn</h3>`
-            document.querySelector('#player1').src = './Image/player1.gif';
-
-        }else if(playerScores[1]>playerScores[0]){
-            score[1].innerHTML = `
-            <p>Player One: ${playerScores[1]}</p>
-            <h3>I Win!!!</h3>`
-            gameBoard.innerHTML = 
-            `<div class="rules-2">
-            <h3>Player Two Win!</h3>
-            <h3>Click New Game to Start a New Turn</h3>`
-            document.querySelector('#player2').src = './Image/player2.gif';
-        }else{
-            gameBoard.innerHTML = 
-            `<div class="rules-2">
-            <h3>No One Win!</h3>
-            <h3>Click New Game to Start a New Turn</h3>`
-        }
-        
-        playerScores.splice(0,2);
-    }
-}
-
-const musicCheck = document.querySelector('.musicCheck');
-const music =document.querySelector('.music iframe');
-const musicOnOff = () =>{
-    if(musicCheck.innerHTML === "On"){
-        musicCheck.innerHTML = "Off";
-        music.src=""
-    }else{
-        musicCheck.innerHTML = "On";
-        music.src = "./sounds/backgroundMusic.mp3";
-    }
 }
